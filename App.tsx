@@ -22,7 +22,10 @@ import {
   Undo2,
   CalendarDays,
   Download,
-  Smartphone
+  Smartphone,
+  MoreVertical,
+  Share,
+  Info
 } from 'lucide-react';
 import { AppTab, InventoryItem, ItemStatus, AlertSettings } from './types';
 import { extractProductInfo } from './services/geminiService';
@@ -54,16 +57,14 @@ const App: React.FC = () => {
     const handler = (e: any) => {
       e.preventDefault();
       setDeferredPrompt(e);
+      console.log("Installation possible détectée");
     };
     window.addEventListener('beforeinstallprompt', handler);
     return () => window.removeEventListener('beforeinstallprompt', handler);
   }, []);
 
   const handleInstallClick = async () => {
-    if (!deferredPrompt) {
-      alert("L'application est déjà installée ou votre navigateur ne supporte pas l'installation automatique. Sur iPhone, utilisez 'Partager' > 'Sur l'écran d'accueil'.");
-      return;
-    }
+    if (!deferredPrompt) return;
     deferredPrompt.prompt();
     const { outcome } = await deferredPrompt.userChoice;
     if (outcome === 'accepted') {
@@ -279,17 +280,33 @@ const ReceptionView: React.FC<{ onAdd: (item: InventoryItem) => void; onStartPro
 };
 
 const SettingsView: React.FC<{ settings: AlertSettings; setSettings: (s: AlertSettings) => void; onInstall: () => void; showInstall: boolean; }> = ({ settings, setSettings, onInstall, showInstall }) => (
-  <div className="p-6 space-y-6">
+  <div className="p-6 pb-32 space-y-6">
     <h2 className="text-2xl font-black text-gray-900 uppercase italic">Réglages</h2>
     
-    {showInstall && (
+    {showInstall ? (
       <button onClick={onInstall} className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-6 rounded-3xl shadow-xl flex items-center justify-between group active:scale-95 transition-transform">
         <div className="text-left">
           <p className="font-black uppercase italic text-lg leading-none">Installer l'app</p>
-          <p className="text-xs opacity-80 mt-1 font-bold">Utiliser La Pause sans navigateur</p>
+          <p className="text-xs opacity-80 mt-1 font-bold">Ajouter à l'écran d'accueil</p>
         </div>
         <Smartphone className="w-10 h-10 opacity-50 group-hover:opacity-100 transition-opacity" />
       </button>
+    ) : (
+      <div className="bg-blue-50 p-6 rounded-3xl border border-blue-100 space-y-4">
+        <div className="flex items-center gap-2 text-blue-700 font-black uppercase text-xs">
+          <Info size={16} /> Comment installer l'application ?
+        </div>
+        <div className="space-y-4">
+          <div className="flex gap-3 items-start">
+            <div className="bg-white p-2 rounded-lg shadow-sm font-bold text-blue-600 text-xs">Android</div>
+            <p className="text-[11px] text-gray-600 font-medium">Appuyez sur les <MoreVertical size={14} className="inline bg-gray-200 rounded" /> en haut à droite de Chrome, puis sur <b>"Installer l'application"</b>.</p>
+          </div>
+          <div className="flex gap-3 items-start">
+            <div className="bg-white p-2 rounded-lg shadow-sm font-bold text-pink-600 text-xs">iPhone</div>
+            <p className="text-[11px] text-gray-600 font-medium">Appuyez sur <Share size={14} className="inline text-blue-500" /> en bas de Safari, puis sur <b>"Sur l'écran d'accueil"</b>.</p>
+          </div>
+        </div>
+      </div>
     )}
 
     <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm space-y-6">
@@ -297,7 +314,11 @@ const SettingsView: React.FC<{ settings: AlertSettings; setSettings: (s: AlertSe
         <div className="flex items-center gap-3"><div className="p-2 bg-orange-100 text-orange-600 rounded-xl"><Bell size={20} /></div><div><p className="font-bold text-gray-800">Alerte DLC</p><p className="text-[10px] text-gray-400 font-bold uppercase">Jours avant expiration</p></div></div>
         <input type="number" className="w-16 p-2 bg-gray-50 border rounded-xl text-center font-black text-blue-600" value={settings.expiryThresholdDays} onChange={e => setSettings({...settings, expiryThresholdDays: parseInt(e.target.value) || 0})} />
       </div>
-      <div className="pt-6 border-t border-gray-50 flex justify-between items-center text-xs text-gray-400 font-bold uppercase text-center"><p className="w-full">Version 2.0.0 (PWA Standalone)</p></div>
+    </div>
+
+    <div className="pt-6 text-xs text-gray-300 font-bold uppercase text-center space-y-1">
+      <p>HACCP La Pause © 2024</p>
+      <p>Version 2.1.0 (PWA Ready)</p>
     </div>
   </div>
 );
