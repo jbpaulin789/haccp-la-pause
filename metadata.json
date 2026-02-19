@@ -1,0 +1,7 @@
+{
+  "name": "HACCP La Pause",
+  "description": "Une application mobile pour gérer la réception des marchandises et le suivi des stocks selon les normes HACCP avec analyse d'image par IA.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
