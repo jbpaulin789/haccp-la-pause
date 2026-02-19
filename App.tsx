@@ -27,8 +27,8 @@ import {
   Share,
   Info
 } from 'lucide-react';
-import { AppTab, InventoryItem, ItemStatus, AlertSettings } from './types';
-import { extractProductInfo } from './services/geminiService';
+import { AppTab, InventoryItem, ItemStatus, AlertSettings } from './types.ts';
+import { extractProductInfo } from './services/geminiService.ts';
 
 const STORAGE_KEY = 'haccp_stock_data';
 const SETTINGS_KEY = 'haccp_stock_settings';
@@ -44,7 +44,6 @@ const App: React.FC = () => {
     enableBrowserNotifications: false
   });
 
-  // Load data & settings
   useEffect(() => {
     const savedItems = localStorage.getItem(STORAGE_KEY);
     const savedSettings = localStorage.getItem(SETTINGS_KEY);
@@ -52,12 +51,10 @@ const App: React.FC = () => {
     if (savedSettings) setSettings(JSON.parse(savedSettings));
   }, []);
 
-  // PWA Install logic
   useEffect(() => {
     const handler = (e: any) => {
       e.preventDefault();
       setDeferredPrompt(e);
-      console.log("Installation possible détectée");
     };
     window.addEventListener('beforeinstallprompt', handler);
     return () => window.removeEventListener('beforeinstallprompt', handler);
@@ -72,7 +69,6 @@ const App: React.FC = () => {
     }
   };
 
-  // Save changes
   useEffect(() => localStorage.setItem(STORAGE_KEY, JSON.stringify(items)), [items]);
   useEffect(() => localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings)), [settings]);
 
